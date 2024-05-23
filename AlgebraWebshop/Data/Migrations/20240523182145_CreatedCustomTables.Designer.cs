@@ -4,6 +4,7 @@ using AlgebraWebshop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlgebraWebshop.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240523182145_CreatedCustomTables")]
+    partial class CreatedCustomTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -268,8 +271,6 @@ namespace AlgebraWebshop.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductId");
-
                     b.ToTable("OrderItem");
                 });
 
@@ -519,12 +520,6 @@ namespace AlgebraWebshop.Data.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("AlgebraWebshop.Models.Product", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AlgebraWebshop.Models.ProductCategory", b =>
@@ -619,8 +614,6 @@ namespace AlgebraWebshop.Data.Migrations
 
             modelBuilder.Entity("AlgebraWebshop.Models.Product", b =>
                 {
-                    b.Navigation("OrderItems");
-
                     b.Navigation("ProductCategories");
 
                     b.Navigation("ProductImages");

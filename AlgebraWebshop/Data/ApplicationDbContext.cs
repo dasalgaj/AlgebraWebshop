@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AlgebraWebshop.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlgebraWebshop.Data
 {
@@ -18,6 +20,9 @@ namespace AlgebraWebshop.Data
 
         [StringLength(11, MinimumLength = 11)]
         public string? OIB { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<Order> Orders { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -25,6 +30,13 @@ namespace AlgebraWebshop.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }       
+        }
+        
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Category> Category { get; set; }
+        public DbSet<ProductCategory> ProductCategory {  get; set; }
+        public DbSet<ProductImage> ProductImage { get; set; }
+        public DbSet<Order> Order {  get; set; }
+        public DbSet<OrderItem> OrderItem {  get; set; }
     }
 }
