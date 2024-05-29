@@ -66,6 +66,9 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            productCategory.ProductTitle = _context.Product.Where(p => p.Id == productCategory.ProductId).First().Title;
+            productCategory.CategoryTitle = _context.Category.Where(c => c.Id == productCategory.ProductId).First().Title;
+
             return View(productCategory);
         }
 
@@ -87,8 +90,12 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
             var cat = new SelectList(_context.Category, "Id", "Title");
             //TODO: remove already set categories
             ViewBag.Categories = cat;
+            ProductCategory pc = new ProductCategory() { 
+                ProductId = productId,
+                ProductTitle = product.Title
+            };
 
-            return View();
+            return View(pc);
         }
 
         // POST: Admin/ProductCategories/Create
@@ -98,11 +105,13 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ProductId,CategoryId")] ProductCategory productCategory)
         {
+            ModelState.Remove("ProductTitle");
+            ModelState.Remove("CategoryTitle");
             if (ModelState.IsValid)
             {
                 _context.Add(productCategory);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { productId = productCategory.ProductId });
             }
             return View(productCategory);
         }
@@ -120,6 +129,12 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            var cat = new SelectList(_context.Category, "Id", "Title", productCategory.CategoryId);
+            //TODO: remove already set categories
+            ViewBag.Categories = cat;
+            productCategory.ProductTitle = _context.Product.Where(p => p.Id == productCategory.ProductId).First().Title;
+
             return View(productCategory);
         }
 
@@ -135,6 +150,8 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove("ProductTitle");
+            ModelState.Remove("CategoryTitle");
             if (ModelState.IsValid)
             {
                 try
@@ -153,7 +170,7 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { productId = productCategory.ProductId });
             }
             return View(productCategory);
         }
@@ -173,6 +190,9 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            productCategory.ProductTitle = _context.Product.Where(p => p.Id == productCategory.ProductId).First().Title;
+            productCategory.CategoryTitle = _context.Category.Where(c => c.Id == productCategory.ProductId).First().Title;
+
             return View(productCategory);
         }
 
@@ -182,13 +202,15 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var productCategory = await _context.ProductCategory.FindAsync(id);
+            int productId = 0;
             if (productCategory != null)
             {
+                productId = productCategory.ProductId;
                 _context.ProductCategory.Remove(productCategory);
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { productId = productId });
         }
 
         private bool ProductCategoryExists(int id)
