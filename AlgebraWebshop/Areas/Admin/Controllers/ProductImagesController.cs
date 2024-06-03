@@ -156,19 +156,38 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove("UploadImage");
             if (ModelState.IsValid)
             {
                 try
                 {
+                    string oldFile = "";
                     // check if new image is uploaded, if so, replace the old one
                     if (UploadImage != null)
                     {
                         // save to disk
-                        // delete old one
-                        productImage.ImageUrl = "new image";
+                        var fileextension = System.IO.Path.GetExtension(UploadImage.FileName);
+                        // Save image to wwwroot/images
+                        var filename = Guid.NewGuid().ToString() + fileextension;
+                        var path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot/images", filename);
+                        using (var stream = new System.IO.FileStream(path, System.IO.FileMode.Create))
+                        {
+                            await UploadImage.CopyToAsync(stream);
+                        }
+                        oldFile = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", productImage.ImageUrl.Replace("/images/", ""));
+                        productImage.ImageUrl = "/images/" + filename;
                     }
+
                     _context.Update(productImage);
                     await _context.SaveChangesAsync();
+
+                    if (oldFile != "")
+                    {
+                        if (System.IO.File.Exists(oldFile))
+                        {
+                            System.IO.File.Delete(oldFile);
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -181,7 +200,7 @@ namespace AlgebraWebshop.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { productId = productImage.ProductId });
             }
             return View(productImage);
         }
