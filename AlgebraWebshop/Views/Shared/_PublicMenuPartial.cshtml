@@ -1,6 +1,14 @@
-﻿<li class="nav-item">
+﻿@using AlgebraWebshop.Extensions;
+@inject IHttpContextAccessor HttpContextAccessor
+
+<li class="nav-item">
     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Product">Products</a>
 </li>
 <li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Product">Cart</a>
+    @{
+        List<CartItem> cart = HttpContextAccessor.HttpContext.Session.GetObjectFromjson<List<CartItem>>("_cart") ?? new List<CartItem>();
+        string cartcount = "";
+        if (cart.Count > 0) cartcount = $"({cart.Count})";
+    }
+    <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Cart @cartcount</a>
 </li>
