@@ -29,7 +29,7 @@ namespace AlgebraWebshop.Models
             {
                 total += item.ItemTotalPrice();
             }
-            return total - DiscountAmount; 
+            return total - DiscountAmount;
         }
 
         public bool IsPaid { get; set; } = false;
