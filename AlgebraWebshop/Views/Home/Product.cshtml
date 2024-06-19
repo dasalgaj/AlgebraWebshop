@@ -30,24 +30,26 @@
         <div class="col-sm-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">@item.Title</h5>
-                    @if (item.ProductImages == null || item.ProductImages.Count < 1)
-                    {
-                        <img class="card-img" src="/images/no-image.jpg" alt="no image" />
-                    }
-                    else
-                    {
-                        var mainImg = item.ProductImages.Where(i => i.MainImage == true).FirstOrDefault();
-                        if (mainImg != null)
+                    <a asp-action="ProductDetails" asp-route-id="@item.Id" style="text-decoration: none; color: inherit">
+                        <h5 class="card-title">@item.Title</h5>
+                        @if (item.ProductImages == null || item.ProductImages.Count < 1)
                         {
-                            <img class="card-img" src="@mainImg.ImageUrl" alt="@item.Title" />
+                            <img class="card-img" src="/images/no-image.jpg" alt="no image" />
                         }
                         else
                         {
-                            <img class="card-img" src="@item.ProductImages.First().ImageUrl" alt="@item.ProductImages.First().Name" />
-                        }
-                    }
-                    <p class="card-text">@item.Description</p>
+                            var mainImg = item.ProductImages.Where(i => i.MainImage == true).FirstOrDefault();
+                            if (mainImg != null)
+                            {
+                                <img class="card-img" src="@mainImg.ImageUrl" alt="@item.Title" />
+                            }
+                            else
+                            {
+                                <img class="card-img" src="@item.ProductImages.First().ImageUrl" alt="@item.ProductImages.First().Name" />
+                            }
+                        }                       
+                        <p class="card-text text-truncate">@item.Description</p>                        
+                    </a>
                     <hr />
                     <table class="table table-condensed table-hover">
                         <thead>
